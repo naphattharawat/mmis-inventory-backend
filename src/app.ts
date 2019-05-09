@@ -28,7 +28,6 @@ import { MySqlConnectionConfig } from 'knex';
 import { Jwt } from './models/jwt';
 const jwt = new Jwt();
 
-import testRoute from './routes/test';
 
 import indexRoute from './routes/index';
 import genericMedicalSuppliesRoute from './routes/genericsMedicalSupplies';
@@ -48,8 +47,6 @@ import locationRoute from "./routes/locations";
 import receiveRoute from "./routes/receives";
 import alertExpiredRoute from './routes/alertExpired';
 import requisitionType from "./routes/requisitionType";
-import unitissue from './routes/unitissue';
-import productLots from './routes/productLots';
 import abcVenRoute from './routes/abcVen';
 import periodRoute from "./routes/period";
 import minMaxRoute from "./routes/minMax";
@@ -61,7 +58,6 @@ import requisitionRoute from "./routes/requisition";
 
 import stdRoute from './routes/standardCode';
 
-import lotRoute from './routes/lots';
 import donatorRoute from './routes/donators';
 import countingRoute from './routes/counting';
 
@@ -75,8 +71,6 @@ import reportInventoryRoute from './routes/reports/inventory';
 import reportRequisitionRoute from './routes/reports/requisition';
 import reportInternalissueRoute from './routes/reports/internalissue';
 
-// production unit
-import productionUnitRoute from './routes/productionUnits';
 
 import basicRoute from './routes/basic';
 
@@ -92,7 +86,6 @@ import staffRoute from './routes/staff';
 import payRequisitionRoute from './routes/payRequisition';
 
 import settingRoute from './routes/setting';
-import versionRoute from './routes/version';
 import borrowNoteRoute from './routes/borrowNote';
 import borrowOtherRoute from './routes/borrow-other';
 
@@ -100,7 +93,6 @@ import toolsRoute from './routes/tools';
 import returnBudgetRoute from "./routes/returnBudget";
 import staffBorrowRoute from './routes/staffBorrow';
 import staffAlertExpired from './routes/staffAlertExpired';
-import staffBorrowOtherRoute from './routes/staffBorrowOther';
 
 const app: express.Express = express();
 
@@ -216,8 +208,6 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
-app.use('/api-test', testRoute);
-app.use('/version', versionRoute);
 app.use('/generics', checkAuth, genericRoute);
 app.use('/generics-medical-supplies', checkAuth, adminAuth, genericMedicalSuppliesRoute);
 app.use('/labelers', checkAuth, adminAuth, labelerRoute);
@@ -239,7 +229,6 @@ app.use('/addition', checkAuth, adminAuth, additionRoute);
 
 app.use('/pick', checkAuth, adminAuth, pickRoute)
 app.use('/alert-expired', checkAuth, adminAuth, alertExpiredRoute);
-app.use('/productlots', checkAuth, adminAuth, productLots);
 app.use('/abc-ven', checkAuth, adminAuth, abcVenRoute);
 app.use('/period', checkAuth, adminAuth, periodRoute);
 app.use('/transectiontype', checkAuth, adminAuth, transectionTypeRoute);
@@ -247,10 +236,7 @@ app.use('/receiveothertype', checkAuth, adminAuth, receiveotherTypeRoute);
 // app.use('/borrows', checkAuth, adminAuth, borrowRoute);
 app.use('/transfer', checkAuth, adminAuth, transferRoute);
 app.use('/borrow', checkAuth, adminAuth, borrowRoute);
-app.use('/production-units', checkAuth, adminAuth, productionUnitRoute);
-app.use('/unitissue', checkAuth, adminAuth, unitissue)
 
-app.use('/lots', checkAuth, lotRoute)
 app.use('/donators', checkAuth, adminAuth, donatorRoute)
 // app.use('/counting', countingRoute)
 app.use('/counting', checkAuth, adminAuth, countingRoute)

@@ -66,11 +66,11 @@ router.delete('/removePick/:pickId', async (req, res, next) => {
     db.destroy();
   }
 });
-router.post('/approvePick', async (req, res, next) => {
+router.post('/approve', async (req, res, next) => {
   let db = req.db;
-  let pick_id = req.body.pick_id
+  let pickId = req.body.pickId
   try {
-    let rsd: any = await pickModel.getDetail(db, pick_id)
+    let rsd: any = await pickModel.getDetail(db, pickId)
     let receiveError: any = []
     for (let detail of rsd) {
       let rs: any = await pickModel.checkApprove(db, detail)
@@ -87,7 +87,7 @@ router.post('/approvePick', async (req, res, next) => {
     } else if (_.find(receiveError, (o: any) => { return o.receive_qty - o.remain_qty - o.pick_qty < 0 })) {
       res.send({ ok: false, error: 'มีรายการหยิบเกินจำนวนรับ' });
     } else {
-      await pickModel.approve(db, pick_id)
+      await pickModel.approve(db, pickId)
       res.send({ ok: true });
     }
   } catch (error) {
@@ -107,23 +107,6 @@ router.get('/gerProductReceiveNotPO', async (req, res, next) => {
     res.send({ ok: false, error: error.message });
   } finally {
     db.destroy();
-  }
-});
-
-router.get('/gerReceiveItem', async (req, res, next) => {
-  let db = req.db;
-  let receiveId = req.query.receiveId;
-  if (receiveId) {
-    try {
-      let results = await pickModel.getReceiveProducts(db, receiveId);
-      res.send({ ok: true, rows: results });
-    } catch (error) {
-      res.send({ ok: false, errror: error.message });
-    } finally {
-      db.destroy();
-    }
-  } else {
-    res.send({ ok: false, error: 'กรุณาระบุเลขที่ใบรับ' });
   }
 });
 

@@ -474,44 +474,6 @@ router.post('/products/searchinwarehouse', wrap(async (req, res, next) => {
   }
 }));
 
-router.post('/warehouseproduct', wrap(async (req, res, next) => {
-  let products = req.body.products;
-  let warehouseId = req.body.warehouseId;
-  let db = req.db;
-
-  let _products: Array<any> = [];
-  products.forEach((v: any) => {
-    let obj: any = {
-      warehouse_id: warehouseId,
-      product_id: v.product_id,
-      generic_id: v.generic_id,
-      unit_id: v.unit_id || 0,
-      min: v.min || 0,
-      max: v.max || 0
-    };
-    _products.push(obj);
-  });
-
-
-  // console.log(_products);
-  if (_products) {
-    try {
-      let results = await warehouseModel.saveWarehouseProducts(db, _products);
-      res.send({ ok: true });
-    } catch (error) {
-      console.log(error);
-      res.send({ ok: false, error: error.message })
-    } finally {
-      db.destroy();
-    }
-
-  } else {
-    res.send({ ok: false, error: 'ข้อมูลไม่ครบถ้วน' })
-  }
-}));
-
-
-
 
 //แสดง template ทั้งหมด
 router.get('/warehouseproducttemplate', wrap(async (req, res, next) => {

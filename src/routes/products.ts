@@ -120,10 +120,10 @@ router.get('/search-warehouse-autocomplete', async (req, res, next) => {
 
 });
 
-router.get('/unit-conversion/:genericId', async (req, res, next) => {
+router.get('/unit-conversion', async (req, res, next) => {
 
   let db = req.db;
-  const genericId = req.params.genericId;
+  const genericId = req.query.genericId;
 
   try {
     let rs: any = await productModel.getProductUnitConversion(db, genericId);
@@ -283,98 +283,6 @@ router.post('/', async (req, res, next) => {
   }
 });
 
-router.put('/:productId', async (req, res, next) => {
-  let products = req.body.products;
-  let productId = req.params.productId;
-
-  let productName = products.productName;
-  let genericId = products.genericId;
-  let manufacturer = products.manufacturer;
-  let vendor = products.vendor;
-  let packages = products.packages;
-
-  let _packages = [];
-  let db = req.db;
-
-  if (productName && productId && manufacturer && vendor && genericId) {
-    let datas: any = {
-      product_name: productName
-    }
-
-    packages.forEach(v => {
-      let obj: any = {
-        product_id: productId,
-        package_id: v
-      }
-      _packages.push(obj);
-    });
-
-    let labeler: any = [];
-    let mLabeler: any = {
-      product_id: productId,
-      labeler_id: manufacturer,
-      type_id: 'M'
-    }
-    let vLabeler: any = {
-      product_id: productId,
-      labeler_id: vendor,
-      type_id: 'V'
-    }
-
-    labeler = [vLabeler, mLabeler];
-
-    try {
-      await productModel.update(db, productId, datas);
-      await productModel.removeProductPackages(db, productId);
-      await productModel.saveProductPackages(db, _packages);
-      await productModel.removeProductLabeler(db, productId);
-      await productModel.saveProductLabeler(db, labeler);
-      // await productModel.updateProductGeneric(db, productId, genericId);
-      res.send({ ok: true });
-    } catch (error) {
-      res.send({ ok: false, error: error.message })
-    } finally {
-      db.destroy();
-    }
-
-  } else {
-    res.send({ ok: false, error: 'ข้อมูลไม่สมบูรณ์' });
-  }
-});
-
-
-router.get('/detail/:productId', async (req, res, next) => {
-  let productId = req.params.productId;
-  let db = req.db;
-
-  try {
-    let rs: any = await productModel.detail(db, productId);
-    res.send({ ok: true, detail: rs[0] });
-  } catch (error) {
-    res.send({ ok: false, error: error.message });
-  } finally {
-    db.destroy();
-  }
-
-});
-
-router.delete('/:productId', async (req, res, next) => {
-  let productId = req.params.productId;
-  let db = req.db;
-
-  try {
-    await productModel.removeProductLabeler(db, productId);
-    await productModel.removeProductPackages(db, productId);
-    // await productModel.removeProductGeneric(db, productId);
-    res.send({ ok: true });
-  } catch (error) {
-    res.send({ ok: false, error: error.message });
-  } finally {
-    db.destroy();
-  }
-
-});
-
 router.post('/stock/products/all', async (req, res, next) => {
   let db = req.db;
   let limit = req.body.limit || 10;
@@ -457,10 +365,10 @@ router.post('/stock/products/total', async (req, res, next) => {
 });
 
 // รายการสินค้าคงเหลือแยกตามคลัง และ lot
-router.get('/stock/remain/:productId/:warehouseId', async (req, res, next) => {
+router.get('/stock/remain', async (req, res, next) => {
   let db = req.db;
-  let productId = req.params.productId;
-  let warehouseId = req.params.warehouseId;
+  let productId = req.query.productId;
+  let warehouseId = req.query.warehouseId;
   console.log(productId, warehouseId);
   try {
     let rs = await productModel.adminGetAllProductsDetailList(db, productId, warehouseId);
@@ -472,9 +380,9 @@ router.get('/stock/remain/:productId/:warehouseId', async (req, res, next) => {
   }
 });
 
-router.get('/stock/remain/generic/:genericId', async (req, res, next) => {
+router.get('/stock/remain/generic', async (req, res, next) => {
   let db = req.db;
-  let genericId = req.params.genericId;
+  let genericId = req.query.genericId;
 
   try {
     let rs = await productModel.adminGetAllProductsDetailListGeneric(db, genericId);
@@ -487,10 +395,10 @@ router.get('/stock/remain/generic/:genericId', async (req, res, next) => {
 });
 
 //ค้นหารายการสินค้าจากคลัง
-router.get('/getallproductinwarehouse/:srcwarehouseId/:dstwarehouseId', async (req, res, next) => {
+router.get('/getallproductinwarehouse', async (req, res, next) => {
   let db = req.db;
-  let srcwarehouseId = req.params.srcwarehouseId;
-  let dstwarehouseId = req.params.dstwarehouseId;
+  let srcwarehouseId = req.query.srcwarehouseId;
+  let dstwarehouseId = req.query.dstwarehouseId;
   try {
     let results = await productModel.getAllProductInWareHouse(db, srcwarehouseId, dstwarehouseId);
     res.send({ ok: true, rows: results[0] });
@@ -501,10 +409,10 @@ router.get('/getallproductinwarehouse/:srcwarehouseId/:dstwarehouseId', async (r
   }
 });
 
-router.post('/template/search-product-warehouse/:srcWarehouseId/:dstwarehouseId', async (req, res, next) => {
+router.post('/template/search-product-warehouse', async (req, res, next) => {
   let db = req.db;
-  let srcWarehouseId = req.params.srcWarehouseId;
-  let dstwarehouseId = req.params.dstwarehouseId;
+  let srcWarehouseId = req.query.srcWarehouseId;
+  let dstwarehouseId = req.query.dstwarehouseId;
   let query = req.body.query;
 
   try {
@@ -518,9 +426,9 @@ router.post('/template/search-product-warehouse/:srcWarehouseId/:dstwarehouseId'
 });
 
 //ค้นหารายการสินค้าจาก Template
-router.get('/getallproductintemplate/:templateId', async (req, res, next) => {
+router.get('/template', async (req, res, next) => {
   let db = req.db;
-  let templateId = req.params.templateId;
+  let templateId = req.query.templateId;
   try {
     let results = await productModel.getAllProductInTemplate(db, templateId);
     res.send({ ok: true, rows: results[0] });
@@ -530,9 +438,9 @@ router.get('/getallproductintemplate/:templateId', async (req, res, next) => {
     db.destroy();
   }
 });
-router.get('/getallproductintemplate-issue/:templateId', async (req, res, next) => {
+router.get('/template/issue/', async (req, res, next) => {
   let db = req.db;
-  let templateId = req.params.templateId;
+  let templateId = req.query.templateId;
   try {
     let results = await productModel.getAllProductInTemplateIssue(db, templateId);
     res.send({ ok: true, rows: results[0] });
@@ -542,9 +450,9 @@ router.get('/getallproductintemplate-issue/:templateId', async (req, res, next) 
     db.destroy();
   }
 });
-router.get('/searchallproduct/:query', async (req, res, next) => {
+router.get('/search', async (req, res, next) => {
   let db = req.db;
-  let query = req.params.query;
+  let query = req.query.query;
   try {
     let results = await productModel.searchallProduct(db, query);
     res.send({ ok: true, rows: results[0] });
@@ -555,12 +463,12 @@ router.get('/searchallproduct/:query', async (req, res, next) => {
   }
 });
 
-router.get('/full-detail/:productNewId', async (req, res, next) => {
+router.get('/full-detail', async (req, res, next) => {
   let db = req.db;
-  let productNewId = req.params.productNewId;
+  let wmProductId = req.query.wmProductId;
 
   try {
-    let results = await productModel.getProductsDetail(db, productNewId);
+    let results = await productModel.getProductsDetail(db, wmProductId);
     res.send({ ok: true, rows: results[0] });
   } catch (error) {
     res.send({ ok: false, error: error.message });
@@ -569,10 +477,10 @@ router.get('/full-detail/:productNewId', async (req, res, next) => {
   }
 });
 
-router.get('/getwarehouseproductremain/:warehouseId/:productId', async (req, res, next) => {
+router.get('/remain/warehouse/detail', async (req, res, next) => {
   let db = req.db;
-  let warehouseId = req.params.warehouseId;
-  let productId = req.params.productId;
+  let warehouseId = req.query.warehouseId;
+  let productId = req.query.productId;
 
   try {
     let result = await productModel.getWarehouseProductRemain(db, warehouseId, productId);
@@ -614,9 +522,9 @@ router.get('/mapping/search-product-tmt', async (req, res, next) => {
 
 });
 
-router.get('/mapping/search-product/:query', async (req, res, next) => {
+router.get('/mapping/search-product', async (req, res, next) => {
   let db = req.db;
-  let query = req.params.query;
+  let query = req.query.query;
 
   try {
     let rs: any = await productModel.getSearchProduct(db, query);

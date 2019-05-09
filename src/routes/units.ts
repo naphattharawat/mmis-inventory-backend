@@ -148,7 +148,7 @@ router.post('/', wrap(async (req, res, next) => {
     }
 
   } else {
-    res.send({ ok: false, error: 'ข้อมูลไม่สมบูรณ์' }) ;
+    res.send({ ok: false, error: 'ข้อมูลไม่สมบูรณ์' });
   }
 }));
 
@@ -181,7 +181,7 @@ router.put('/:unitId', wrap(async (req, res, next) => {
     }
 
   } else {
-    res.send({ ok: false, error: 'ข้อมูลไม่สมบูรณ์' }) ;
+    res.send({ ok: false, error: 'ข้อมูลไม่สมบูรณ์' });
   }
 }));
 
@@ -297,20 +297,6 @@ router.get('/conversion/:genericId', wrap(async (req, res, next) => {
 
   try {
     const rows = await unitModel.getConversionList(db, genericId, orderBy);
-    res.send({ ok: true, rows: rows });
-  } catch (error) {
-    res.send({ ok: false, error: error.message });
-  } finally {
-    db.destroy();
-  }
-
-}));
-router.get('/conversion/staff/:genericId', wrap(async (req, res, next) => {
-  let genericId = req.params.genericId;
-  let db = req.db;
-
-  try {
-    const rows = await unitModel.getConversionListStaff(db, genericId);
     res.send({ ok: true, rows: rows });
   } catch (error) {
     res.send({ ok: false, error: error.message });

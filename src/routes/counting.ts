@@ -1,4 +1,3 @@
-import { PeopleModel } from './../models/people';
 import { CountingModel } from './../models/counting';
 import { SettingModel } from "../models/settings";
 
@@ -20,36 +19,8 @@ import * as numeral from 'numeral';
 const router = express.Router();
 
 const countingModel = new CountingModel();
-const peopleModel = new PeopleModel();
 const settingModel = new SettingModel();
 
-router.get('/people-list', wrap(async (req, res, next) => {
-  let db = req.db;
-  try {
-    let rows = await peopleModel.list(db);
-    res.send({ ok: true, rows: rows });
-  } catch (error) {
-    res.send({ ok: false, error: error.message });
-  } finally {
-    db.destroy();
-  }
-}));
-
-router.get('/product-all', (req, res, next) => {
-
-  let db = req.db;
-
-  countingModel.getAllProducts(db/*, limit, offset*/)
-    .then((results: any) => {
-      res.send({ ok: true, rows: results });
-    })
-    .catch(error => {
-      res.send({ ok: false, error: error.message })
-    })
-    .finally(() => {
-      db.destroy();
-    });
-});
 
 router.get('/product-all-warehouse/:warehouseId', (req, res, next) => {
 
@@ -509,13 +480,13 @@ router.get('/cycle/remain-in-warehouse/:productId', wrap(async (req, res, next) 
 
   if (productId) {
     try {
-    const rows = await countingModel.getRemainInWarehouse(db, productId);
-    res.send({ ok: true, rows: rows });
-  } catch (error) {
-    res.send({ ok: false, error: error.message });
-  } finally {
-    db.destroy();
-  }
+      const rows = await countingModel.getRemainInWarehouse(db, productId);
+      res.send({ ok: true, rows: rows });
+    } catch (error) {
+      res.send({ ok: false, error: error.message });
+    } finally {
+      db.destroy();
+    }
   } else {
     res.send({ ok: false, error: 'ข้อมูลไม่ครบถ้วน' });
   }

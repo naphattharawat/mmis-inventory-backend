@@ -7,30 +7,9 @@ import * as co from 'co-express';
 import * as uuid from 'uuid/v4';
 import * as _ from 'lodash';
 
-import { unitOfTime } from 'moment';
-import { ReceiveModel } from '../models/receive';
 import { ProductModel } from "../models/product";
-import { LocationModel } from "../models/location";
-import { WarehouseModel } from '../models/warehouse';
-import { PeopleModel } from '../models/people';
-import { StockCard } from '../models/stockcard';
-
-import {
-  IReceiveSummaryFields,
-  IReceiveSummaryParams,
-  IReceiveDetailFields,
-  IReceiveDetailParams,
-  IRequisitionSummaryParams,
-  IRquisitiondetailParams,
-  IConfirmSummaryFields,
-  IConfirmSummaryParams,
-  IConfirmProductParams,
-  IConfirmProductFields,
-  IWMProductsFields
-} from '../models/model';
 
 import { RequisitionModel } from '../models/requisition';
-import { LotModel } from '../models/lot';
 import { SerialModel } from '../models/serial';
 import { RequisitionOrderModel } from '../models/requisitionOrder';
 import { PeriodModel } from '../models/period';
@@ -40,9 +19,6 @@ const router = express.Router();
 
 const requisitionModel = new RequisitionModel();
 const productModel = new ProductModel();
-const peopleModel = new PeopleModel();
-const lotModel = new LotModel();
-const stockCardModel = new StockCard();
 const serialModel = new SerialModel();
 const orderModel = new RequisitionOrderModel();
 const periodModel = new PeriodModel();
@@ -747,36 +723,6 @@ router.post('/orders/unpaid/reorder', async (req, res, next) => {
   }
 
 });
-
-// router.post('/orders/approve/:requisitionId', async (req, res, next) => {
-//   let requisitionId = req.params.requisitionId;
-//   let db = req.db;
-//   let approve = req.body.approve;
-//   let approveItems = req.body.items;
-
-//   try {
-//     // save approve
-//     let rsApprove: any = await orderModel.saveApprove(db, approve);
-//     let approveId = rsApprove[0];
-
-//     let _items = [];
-//     approveItems.forEach((v: any) => {
-//       let obj: any = {};
-//       obj.approve_id = approveId;
-//       obj.product_new_id = v.product_new_id;
-//       obj.approve_qty = v.approve_qty;
-//       obj.generic_id = v.generic_id;
-
-//       _items.push(obj);
-//     });
-
-//   } catch (error) {
-//     res.send({ ok: false, error: error.message });
-//   } finally {
-//     db.destroy();
-//   }
-
-// });
 
 /***********************  Confrim ***********************/
 

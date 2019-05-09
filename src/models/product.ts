@@ -996,22 +996,18 @@ group by mpp.product_id
     return knex.raw(sql, [warehouseId, _query, _query, _query, _query]);
   }
 
-  getProductsDetail(knex: Knex, productNewId: any) {
+  getProductsDetail(knex: Knex, wmProductId: any) {
     return knex('mm_products as p')
       .select('p.*', 'wp.qty', 'wp.cost', 'wp.lot_no',
         'wp.expired_date', 'wp.wm_product_id as product_new_id',
         'g.generic_name', 'u.unit_name as base_unit_name', 'mug.qty as conversion', 'uu.unit_name as large_unit'
       )
       .innerJoin('wm_products as wp', 'wp.product_id', 'p.product_id')
-      // .innerJoin('mm_generic_product as gp', 'gp.product_id', 'p.product_id')
-      // .innerJoin('wm_all_products_view as a', 'a.generic_id', 'gp.generic_id')
-      // .innerJoin('mm_product_package as mpp', 'mpp.product_id', 'p.product_id')
-      // .innerJoin('wm_product_lots as wl', 'wl.lot_id', 'wp.lot_id')
       .leftJoin('mm_generics as g', 'g.generic_id', 'p.generic_id')
       .leftJoin('mm_units as u', 'u.unit_id', 'p.primary_unit_id')
       .leftJoin('mm_unit_generics as mug', 'mug.unit_generic_id', 'wp.unit_generic_id')
       .leftJoin('mm_units as uu', 'uu.unit_id', 'mug.from_unit_id')
-      .where('wp.wm_product_id', productNewId)
+      .where('wp.wm_product_id', wmProductId)
       .limit(1);
   }
 

@@ -12,7 +12,7 @@ router.get('/', (req, res, next) => {
 
   let db = req.db;
   let query = req.query.query || ''
-  donatorModel.list(db,query)
+  donatorModel.list(db, query)
     .then((results: any) => {
       res.send({ ok: true, rows: results });
     })
@@ -48,11 +48,11 @@ router.post('/', wrap(async (req, res, next) => {
     }
 
   } else {
-    res.send({ ok: false, error: 'ข้อมูลไม่สมบูรณ์' }) ;
+    res.send({ ok: false, error: 'ข้อมูลไม่สมบูรณ์' });
   }
 }));
 
-router.put('/:donatorId', wrap(async(req, res, next) => {
+router.put('/:donatorId', wrap(async (req, res, next) => {
   let donatorId = req.params.donatorId;
   let donatorName = req.body.donatorName;
   let donatorAddress = req.body.donatorAddress;
@@ -75,30 +75,17 @@ router.put('/:donatorId', wrap(async(req, res, next) => {
       db.destroy();
     }
   } else {
-    res.send({ ok: false, error: 'ข้อมูลไม่สมบูรณ์' }) ;
+    res.send({ ok: false, error: 'ข้อมูลไม่สมบูรณ์' });
   }
 }));
 
-router.delete('/:donatorId', wrap(async(req, res, next) => {
+router.delete('/:donatorId', wrap(async (req, res, next) => {
   let donatorId = req.params.donatorId;
   let db = req.db;
 
   try {
     await donatorModel.remove(db, donatorId);
     res.send({ ok: true });
-  } catch (error) {
-    res.send({ ok: false, error: error.message });
-  } finally {
-    db.destroy();
-  }
-}));
-
-router.get('/donate-types', wrap(async(req, res, next) => {
-  let db = req.db;
-
-  try {
-    const donateType = await donatorModel.getDonateType(db);
-    res.send({ ok: true, rows: donateType });
   } catch (error) {
     res.send({ ok: false, error: error.message });
   } finally {

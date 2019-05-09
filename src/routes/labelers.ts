@@ -12,12 +12,9 @@ const labelerModel = new LabelerModel();
 const organizationModel = new OrganizationModel();
 
 router.get('/', async (req, res, next) => {
-  // let limit = req.body.limit || 10;
-  // let offset = req.body.offset || 0;
-
   let db = req.db;
   try {
-    let rs: any = await labelerModel.list(db/*, limit, offset*/);
+    let rs: any = await labelerModel.list(db);
     res.send({ ok: true, rows: rs });
   } catch (error) {
     res.send({ ok: false, error: error.message });
@@ -99,7 +96,7 @@ router.post('/', (req, res, next) => {
       }
     }
   } else {
-    res.send({ ok: false, error: 'ข้อมูลไม่สมบูรณ์' }) ;
+    res.send({ ok: false, error: 'ข้อมูลไม่สมบูรณ์' });
   }
 });
 
@@ -164,7 +161,7 @@ router.put('/', (req, res, next) => {
       });
 
   } else {
-    res.send({ ok: false, error: 'ข้อมูลไม่สมบูรณ์' }) ;
+    res.send({ ok: false, error: 'ข้อมูลไม่สมบูรณ์' });
   }
 });
 

@@ -11,13 +11,11 @@ import * as express from 'express';
 import * as moment from 'moment';
 import * as co from 'co-express';
 import * as _ from 'lodash';
-import * as Random from 'random-js';
 import { TransactionType } from '../interfaces/basic';
 
 const router = express.Router();
 
 const borrowModel = new BorrowModel();
-const warehouseModel = new WarehouseModel();
 const serialModel = new SerialModel();
 const stockCard = new StockCard();
 const productModel = new ProductModel();
@@ -282,28 +280,6 @@ router.get('/info-detail/:borrowId', co(async (req, res, next) => {
 
 }));
 
-router.get('/info-detail-edit/:borrowId', co(async (req, res, next) => {
-  let db = req.db;
-  let borrowId = req.params.borrowId;
-  let srcWarehouseId = req.decoded.warehouseId;
-
-  try {
-    const rsGenerics = await borrowModel.getGenericInfo(db, borrowId, srcWarehouseId);
-    let _generics = rsGenerics[0];
-    for (const g of _generics) {
-      const rsProducts = await borrowModel.getProductsInfoEdit(db, borrowId, g.borrow_generic_id);
-      let _products = rsProducts[0];
-      g.products = _products;
-    }
-    res.send({ ok: true, rows: _generics });
-  } catch (error) {
-    res.send({ ok: false, error: error.message });
-  } finally {
-    db.destroy();
-  }
-
-}));
-
 router.delete('/:borrowId', co(async (req, res, next) => {
   let db = req.db;
   let borrowId = req.params.borrowId;
@@ -346,7 +322,7 @@ router.delete('/other/:borrowId', co(async (req, res, next) => {
 
 }));
 
-router.post('/save', co(async (req, res, next) => {
+router.post('/', co(async (req, res, next) => {
   let db = req.db;
   let _summary = req.body.summary;
   let _generics = req.body.generics;
@@ -482,7 +458,7 @@ router.post('/save/from-note', co(async (req, res, next) => {
   }
 }));
 
-router.put('/save/:borrowId', co(async (req, res, next) => {
+router.put('/:borrowId', co(async (req, res, next) => {
   let db = req.db;
   let _summary = req.body.summary;
   let _generics = req.body.generics;
@@ -682,20 +658,6 @@ router.post('/returned/approved', co(async (req, res, next) => {
   }
 }));
 
-router.post('/active', co(async (req, res, next) => {
-  let db = req.db;
-  let transferId = req.body.transferId;
-
-  try {
-    await borrowModel.changeDeleteStatus(db, transferId);
-    res.send({ ok: true });
-  } catch (error) {
-    res.send({ ok: false, error: error.message });
-  } finally {
-    db.destroy();
-  }
-
-}));
 
 router.get('/product-warehouse-lots/:productId/:warehouseId', co(async (req, res, next) => {
 
@@ -875,53 +837,6 @@ const approve = (async (db: Knex, borrowIds: any[], warehouseId: any, peopleUser
 
   return returnData;
 });
-
-
-router.post('/confirm', co(async (req, res, next) => {
-
-  let db = req.db;
-  let transferIds = req.body.transferIds;
-  let peopleUserId = req.decoded.people_user_id;
-
-  try {
-    let isValid = true;
-    const rs = await borrowModel.checkStatus(db, transferIds);
-    for (const i of rs) {
-      if (i.mark_deleted === 'Y') {
-        isValid = false;
-      }
-    }
-    if (isValid) {
-      await borrowModel.changeConfirmStatusIds(db, transferIds, peopleUserId);
-      res.send({ ok: true });
-    } else {
-      res.send({ ok: false, error: 'ไม่สามารถทำรายการได้เนื่องจากสถานะบางรายการมีการเปลี่ยนแปลง กรุณารีเฟรชหน้าจอและทำรายการใหม่' });
-    }
-  } catch (error) {
-    throw error;
-  } finally {
-    db.destroy();
-  }
-
-}));
-
-router.get('/request', co(async (req, res, next) => {
-  let db = req.db;
-  let limit = +req.query.limit || 15;
-  let offset = +req.query.offset || 0;
-  let warehouseId = req.decoded.warehouseId;
-  try {
-    let rows = await borrowModel.transferRequest(db, warehouseId, limit, offset);
-    let total1 = await borrowModel.totalTransferRequest(db, warehouseId);
-    let total2 = await borrowModel.totalNotApproveReceive(db, warehouseId);
-    res.send({ ok: true, rows: rows, totalRequest: total1[0].total, totalNotApprove: total2[0].total });
-  } catch (error) {
-    res.send({ ok: false, error: error.message });
-  } finally {
-    db.destroy();
-  }
-
-}));
 
 router.post('/returned-product', co(async (req, res, next) => {
   let db = req.db;

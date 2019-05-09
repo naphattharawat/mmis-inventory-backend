@@ -491,18 +491,6 @@ router.get('/info/summary', co(async (req, res, next) => {
   }
 }));
 
-router.get('/product-list/:issueId', co(async (req, res, next) => {
-  let db = req.db;
-  let issueId = req.params.issueId;
-  try {
-    let rs = await issueModel.getProductList(db, issueId);
-    res.send({ ok: true, rows: rs[0] });
-  } catch (error) {
-    res.send({ ok: false, error: error.message });
-  } finally {
-    db.destroy();
-  }
-}));
 router.get('/generic-template-list/:id', co(async (req, res, next) => {
   let db = req.db;
   let id = req.params.id;
@@ -518,8 +506,6 @@ router.get('/generic-template-list/:id', co(async (req, res, next) => {
 router.get('/_getissuestemplate/:warehouseId', co(async (req, res, next) => {
   let db = req.db;
   let warehouseId = req.params.warehouseId;
-  console.log(warehouseId + '--------');
-
   try {
     let rows = await issueModel._getissuesTemplate(db, warehouseId);
     res.send({ ok: true, rows: rows });

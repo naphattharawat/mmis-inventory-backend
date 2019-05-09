@@ -248,18 +248,6 @@ router.get('/info/generics', co(async (req, res, next) => {
   }
 }));
 
-router.get('/product-list/:borrowId', co(async (req, res, next) => {
-  let db = req.db;
-  let borrowId = req.params.borrowId;
-  try {
-    let rs = await models.getProductList(db, borrowId);
-    res.send({ ok: true, rows: rs[0] });
-  } catch (error) {
-    res.send({ ok: false, error: error.message });
-  } finally {
-    db.destroy();
-  }
-}));
 router.get('/generic-list/:borrowId', co(async (req, res, next) => {
   let db = req.db;
   let borrowId = req.params.borrowId;

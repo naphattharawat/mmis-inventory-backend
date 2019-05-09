@@ -46,7 +46,7 @@ router.post('/', async (req, res, next) => {
 
 });
 
-router.put('/:borrowNoteId/edit', async (req, res, next) => {
+router.put('/:borrowNoteId', async (req, res, next) => {
   let db = req.db;
   let borrowNoteId = req.params.borrowNoteId;
   let notes = req.body.notes;
@@ -79,7 +79,7 @@ router.put('/:borrowNoteId/edit', async (req, res, next) => {
 
 });
 
-router.get('/:borrowNoteId/detail-list', async (req, res, next) => {
+router.get('/detail-list/:borrowNoteId', async (req, res, next) => {
   let db = req.db;
   let borrowNoteId = req.params.borrowNoteId;
 
@@ -145,7 +145,7 @@ router.delete('/:borrowNoteId', async (req, res, next) => {
 
 });
 
-router.get('/:borrowNoteId/detail-edit', async (req, res, next) => {
+router.get('/detail-edit/:borrowNoteId', async (req, res, next) => {
   let db = req.db;
   let borrowNoteId = req.params.borrowNoteId;
 
@@ -203,31 +203,6 @@ router.get('/report', async (req, res, next) => {
 
 });
 
-router.get('/', async (req, res, next) => {
-  let db = req.db;
-  let query = req.query.query;
-  let limit = +req.query.limit || 20;
-  let offset = +req.query.offset || 0;
-  let accessRight = req.decoded.accessRight;
-  this.rights = accessRight.split(',');
-  // this.admin = _.indexOf(this.rights, 'WM_ADMIN') === -1 ? true : false;
-  let warehouse = req.decoded.warehouseId;
-  // if(this.admin){
-  warehouse = '%' + warehouse + '%';
-  // } else{
-  //   warehouse = '%%'
-  // }
-  try {
-    let rs: any = await borrowModel.getList(db, query, warehouse);
-    let rsTotal: any = await borrowModel.getListTotal(db, query, warehouse);
-    res.send({ ok: true, rows: rs, total: rsTotal[0].total });
-  } catch (error) {
-    res.send({ ok: false, error: error.message });
-  } finally {
-    db.destroy();
-  }
-
-});
 router.get('/admin', async (req, res, next) => {
   let db = req.db;
   let query = req.query.query;

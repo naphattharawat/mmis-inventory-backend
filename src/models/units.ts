@@ -124,24 +124,14 @@ export class UnitModel {
       .orderBy('ug.qty', orderBy)
       .groupByRaw('ug.generic_id, unit_generic_id');
   }
-  getConversionListStaff(knex: Knex, genericId: any) {
-    return knex('mm_unit_generics as ug')
-      .select('ug.*', 'uf.unit_name as from_unit_name', 'ut.unit_name as to_unit_name')
-      .innerJoin('mm_units as uf', 'uf.unit_id', 'ug.from_unit_id')
-      .innerJoin('mm_units as ut', 'ut.unit_id', 'ug.to_unit_id')
-      .where('ug.generic_id', genericId)
-      .where('ug.is_deleted', 'N')
-      .where('ug.is_active', 'Y')
-      .groupByRaw('ug.from_unit_id, ug.to_unit_id, ug.qty');
-  }
 
   removeConversion(knex: Knex, unitProductId: any) {
     return knex('mm_unit_generics')
       .where('unit_product_id', unitProductId)
       .del();
-      // .update({
-      //   is_deleted: 'Y'
-      // });
+    // .update({
+    //   is_deleted: 'Y'
+    // });
   }
 
   getGenericPrimaryUnit(knex: Knex, genericId: any) {

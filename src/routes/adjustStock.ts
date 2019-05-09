@@ -57,18 +57,6 @@ router.get('/list/search', async (req, res, next) => {
     db.destroy();
   }
 });
-router.get('/generic', async (req, res, next) => {
-  const db = req.db;
-  const adjustId = req.query.adjustId;
-  try {
-    const rs = await adjustStockModel.getGeneric(db, adjustId);
-    res.send({ ok: true, rows: rs });
-  } catch (error) {
-    res.send({ ok: false, error: error.message });
-  } finally {
-    db.destroy();
-  }
-});
 
 router.post('/check/password', async (req, res, next) => {
   const db = req.db;

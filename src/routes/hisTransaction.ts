@@ -26,15 +26,12 @@ var storage = multer.diskStorage({
 
 let upload = multer({ storage: storage });
 
-import { ProductLotsModel } from '../models/productLots';
-import { TransactionType } from '../interfaces/basic';
 import { StockCard } from '../models/stockcard';
 import { HisTransactionModel } from '../models/hisTransaction';
 import { WarehouseModel } from '../models/warehouse';
 
 const hisTransactionModel = new HisTransactionModel();
 const stockCardModel = new StockCard();
-const productLotsModel = new ProductLotsModel();
 const warehouseModel = new WarehouseModel();
 
 const router = express.Router();
@@ -396,8 +393,8 @@ router.post('/import', co(async (req, res, next) => {
                 expired_date: p.expired_date,
                 wm_product_id_out: p.wm_product_id
               };
-            //คนไข้คืนยา
-            } else if(h.qty < 0 && HIStype == 2) {
+              //คนไข้คืนยา
+            } else if (h.qty < 0 && HIStype == 2) {
               data = {
                 stock_date: moment(h.date_serv).format('YYYY-MM-DD HH:mm:ss'),
                 product_id: p.product_id,

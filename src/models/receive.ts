@@ -12,29 +12,6 @@ export class ReceiveModel {
     return knex('wm_receive_status')
   }
 
-  getAllProducts(knex: Knex) {
-    return knex('mm_products as p')
-      .select('p.product_id', 'p.product_name', 'gp.generic_id',
-        'v.generic_name', 'v.generic_type', ' l.labeler_name')
-      .innerJoin('mm_generic_product as gp', 'gp.product_id', 'p.product_id')
-      .innerJoin('wm_all_products_view as v', 'v.generic_id', 'gp.generic_id')
-      .innerJoin('mm_product_labeler as pl', 'pl.product_id', 'p.product_id')
-      .innerJoin('mm_labelers as l', 'l.labeler_id', 'pl.labeler_id ')
-      .where('pl.type_id', "M");
-  }
-
-  // getReceiveWaiting(knex: Knex, limit: number, offset: number, warehouseId) {
-  //   return knex('wm_receives as r')
-  //     .select('r.receive_id', 'r.is_cancel', 'r.receive_code', 'r.receive_tmp_code', 'r.purchase_order_id', 'r.receive_date', 'r.delivery_date',
-  //       'r.delivery_code', 'l.labeler_name', 'pp.purchase_order_number', 'pp.purchase_order_book_number', 'pp.purchase_order_id', 'ra.approve_date', 'ra.approve_id')
-  //     .leftJoin('mm_labelers as l', 'l.labeler_id', 'r.vendor_labeler_id')
-  //     .leftJoin('pc_purchasing_order as pp', 'pp.purchase_order_id', 'r.purchase_order_id')
-  //     .leftJoin('wm_receive_approve as ra', 'ra.receive_id', 'r.receive_id')
-  //     .orderBy('r.receive_date', 'DESC')
-  //     .orderBy('r.receive_code', 'DESC')
-  //     .limit(limit)
-  //     .offset(offset);
-  // }
 
   getReceiveNapprove(knex: Knex, limit: number, offset: number) {
     return knex('wm_receives as r')

@@ -2,29 +2,14 @@ import * as uuid from 'uuid/v4';
 
 import * as express from 'express';
 import * as moment from 'moment';
-import * as Random from 'random-js';
 import * as co from 'co-express';
 import * as _ from 'lodash';
-
-import * as fse from 'fs-extra';
-import * as path from 'path';
-import * as fs from 'fs';
-import * as rimraf from 'rimraf';
-import * as gulp from 'gulp';
-import * as gulpData from 'gulp-data';
-import * as gulpPug from 'gulp-pug';
-import * as pdf from 'html-pdf';
-import * as json2xls from 'json2xls';
-import * as numeral from 'numeral';
 
 import { ReceiveModel } from '../models/receive';
 import { ProductModel } from "../models/product";
 import { LocationModel } from "../models/location";
 import { WarehouseModel } from '../models/warehouse';
-import { LotModel } from '../models/lot';
-import { ThaiBath } from '../models/thaiBath';
 
-import { PeopleModel } from '../models/people';
 import { SerialModel } from '../models/serial';
 import { StockCard } from '../models/stockcard';
 import { TransactionType } from '../interfaces/basic';
@@ -36,49 +21,17 @@ const receiveModel = new ReceiveModel();
 const productModel = new ProductModel();
 const locationModel = new LocationModel();
 const warehouseModel = new WarehouseModel();
-const peopleModel = new PeopleModel();
-const lotModel = new LotModel();
-const thaiBath = new ThaiBath();
 const serialModel = new SerialModel();
 const stockcard = new StockCard();
 const periodModel = new PeriodModel();
 const signale = require('signale');
 moment.locale('th');
-router.get('/all-products', (req, res, next) => {
-  let db = req.db;
 
-  receiveModel.getAllProducts(db)
-    .then((results: any) => {
-      res.send({ ok: true, rows: results });
-    })
-    .catch(error => {
-      res.send({ ok: false, error: error.message })
-    })
-    .finally(() => {
-      db.destroy();
-    });
-});
 
 router.get('/product-receives', (req, res, next) => {
   let db = req.db;
 
   receiveModel.getProductReceive(db)
-    .then((results: any) => {
-      res.send({ ok: true, rows: results });
-    })
-    .catch(error => {
-      res.send({ ok: false, error: error.message })
-    })
-    .finally(() => {
-      db.destroy();
-    });
-});
-
-router.post('/get-lots', (req, res, next) => {
-  let db = req.db;
-  let productId = req.body.productId;
-
-  lotModel.getLots(db, productId)
     .then((results: any) => {
       res.send({ ok: true, rows: results });
     })
@@ -120,37 +73,6 @@ router.get('/status', (req, res, next) => {
     });
 });
 
-router.post('/search', (req, res, next) => {
-  let db = req.db;
-  let query = req.body.query || 'xx';
-  console.log(query);
-  productModel.search(db, query)
-    .then((results: any) => {
-      res.send({ ok: true, rows: results[0] });
-    })
-    .catch(error => {
-      res.send({ ok: false, error: error.message })
-    })
-    .finally(() => {
-      db.destroy();
-    });
-});
-
-router.get('/locations/:warehouseId', (req, res, next) => {
-  let db = req.db;
-  const warehouseId = req.params.warehouseId;
-
-  locationModel.getLocationWarehouse(db, warehouseId)
-    .then((results: any) => {
-      res.send({ ok: true, rows: results });
-    })
-    .catch(error => {
-      res.send({ ok: false, error: error.message })
-    })
-    .finally(() => {
-      db.destroy();
-    });
-});
 
 router.get('/warehouse', (req, res, next) => {
   let db = req.db;
@@ -1231,21 +1153,6 @@ router.get('/committee/:committeeId', co(async (req, res, next) => {
   }
 }));
 
-router.get('/people/list', (req, res, next) => {
-  let db = req.db;
-
-  // check duplicated
-  peopleModel.all(db)
-    .then((result: any) => {
-      res.send({ ok: true, rows: result });
-    })
-    .catch((error) => {
-      res.send({ ok: false, errror: error.message });
-    })
-    .finally(() => {
-      db.destroy();
-    });
-});
 
 router.get('/products', co(async (req, res, next) => {
   let db = req.db;
